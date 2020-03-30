@@ -31,14 +31,6 @@ class Posts extends AbstractModel {
         $this->data = 'posts by community';
     }
 
-    // public function getTemplate() {
-    //     return parent::getTemplate();
-    // }
-    
-    // public function getStylesheet() {
-    //     return parent::getStylesheet();
-    // }
-
     public function getData() 
     {
         return $this->data;
@@ -63,27 +55,90 @@ class Posts extends AbstractModel {
                 ];
             }
             return $data;
-            var_dump($data);
+            // var_dump($data);
         }
         catch(PDOException $e) {echo $e->getMessage();}
     }
 
-    public function validateLogin($user, $pass)
+    public function validateLogin($args)
     {
-        if($stmt = $this->db->prepare("SELECT * FROM users WHERE username = ? AND password = ?")) {
-            $stmt->bind_param('ss', $user, md5($pass . $this->salt));
-            $stmt->execute();
-            $stmt->store_result();
+        if($args) {
+            $email = $args['data']['email'];
+            $password = md5($args['data']['password'] . $this->salt);
+            try {
+                $stmt = $this->db->prepare("SELECT users.id, users.firstname, users.lastname, users.email, users.admin FROM users WHERE email = ? AND pass = ?");
+                $stmt->bindParam(1, $email);
+                $stmt->bindParam(2, $password);
+                $stmt->execute();
+                $stmt->setFetchMode(\PDO::FETCH_ASSOC);
+                $data = $stmt->fetch();
+                
+                if($data) {
+                    $_SESSION['loggedIn'] = true;
+                    return true;
+                } else {
+                    $this->logOut();
+                    return false;
+                }
+            } catch(PDOException $e) {
+                echo $e->getMessage("ERROR: Could not prepare MySQLi statement.");
+            }
+        }
+    }
 
-            if($stmt->num_rows > 0) {
-                $stmt->close();
-                return true;
-            } else {
-                $stmt->close();
-                return false;
+    public function checkLoginStatus()
+    {
+        if(isset($_SESSION['loggedIn'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function logOut()
+    {
+        session_destroy();
+        session_start();
+    }
+
+    public function registerUser($args)
+    {
+        $email = $args['data']['email'];
+        $password = md5($args['data']['password'] . $this->salt);
+        
+        if($this->checkUserExists($email)) {
+            try {
+                $stmt = $this->db->prepare("INSERT INTO users (firstname, lastname, pass, email) VALUES (?, ?, ?, ?)");
+                $stmt->bindParam(1, $args['data']['firstname']);
+                $stmt->bindParam(2, $args['data']['lastname']);
+                $stmt->bindParam(3, $password);
+                $stmt->bindParam(4, $email);
+                $stmt->execute();
+                
+                if($data) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch(PDOException $e) {
+                echo $e->getMessage("ERROR: Could not prepare MySQLi statement.");
             }
         } else {
-            die("ERROR: Could not prepare MySQLi statement.");
+            echo 'This email adress is already registered!';
+        }
+    
+    }
+
+    public function checkUserExists($email)
+    {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM users WHERE email = ?");
+            $stmt->bindParam(1, $email);
+            $stmt->execute();
+            $stmt->setFetchMode(\PDO::FETCH_ASSOC);
+            $data = $stmt->fetch();
+        } catch(PDOException $e) {
+            echo $e->getMessage("ERROR: Could not prepare MySQLi statement.");
         }
     }
 }

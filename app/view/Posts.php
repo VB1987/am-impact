@@ -10,7 +10,7 @@ class Posts extends AbstractView {
      */
     public function showCommunityPosts()
     {
-        $style = $this->model->getStylesheet();
+        $style = $this->style;
         $data = '';
         $data .= $this->model->getPostsByCommunity()[0];
 
@@ -24,7 +24,7 @@ class Posts extends AbstractView {
      */
     public function showAllPosts()
     {
-        $style = $this->model->getStylesheet();
+        $style = $this->style;
         $data = '';
         // var_dump($this->model->getData());
         foreach($this->model->getData() as $post => $value) {
@@ -34,23 +34,16 @@ class Posts extends AbstractView {
             $data .= '</article>';
         }
 
-        $postForm = '
-            <form id="post_form" action="" method="POST" enctype="multipart/form-data">
-            <label for="post_title"></label><input type="text" name="post_title">
-            <label for="post_content"></label><input type="text" name="post_content">
-            </form>
-        ';
+        $form = include_once 'templates/postForm.php';
 
         require_once($this->model->getTemplate());
     }
 
-    public function showLoginForm()
+    public function showForm($template)
     {
-        $style = $this->model->getStylesheet();
-        $loginForm = include 'templates/loginForm.php';
+        $style = $this->style;
+        $form = include_once 'templates/' . $template;
 
-        $data = include 'templates/registerForm.php';
-
-        require_once($this->model->getTemplate());
+        // require_once($this->model->getTemplate());
     }
 }

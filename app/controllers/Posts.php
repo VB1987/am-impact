@@ -14,29 +14,41 @@ class Posts extends AbstractController {
         $this->model->getPostsByCommunity();
     }
 
-    public function login()
+    // public function login()
+    // {
+    //     if($_POST['username']) {
+    //         $username = $_POST['username'];
+    //     }
+    //     if($_POST['password']) {
+    //         $password = $_POST['password'];
+    //     }
+    // }
+
+    public function invoke($args)
     {
-        if($_POST['username']) {
-            $username = $_POST['username'];
-        }
-        if($_POST['password']) {
-            $username = $_POST['password'];
+        $action = $args['action'];
+        if($action == 'login') {
+            $login = $this->model->validateLogin($args);
+            
+            if($login) {
+                $this->loginStatus = true;
+            } else {
+                $this->loginStatus = false;
+            }
+        } elseif($action == 'register user') {
+            $this->model->registerUser($args);
+        } elseif($action == 'create community') {
+            $this->model->createCommunity($args);
         }
     }
 
-    public function invoke()
+    public function registerForm()
     {
-        $login = $this->model->validateLogin();
-        
-        if($login) {
-            $this->loginStatus = true;
-        } else {
-            $this->loginStatus = false;
-        }
+        $this->view->showForm('registerForm.php');
     }
 
-    public function getLoginStatus()
+    public function loginForm()
     {
-        return $this->loginStatus;
+        $this->view->showForm('loginForm.php');
     }
 }

@@ -10,15 +10,13 @@ $model = new Models\Posts();
 $controller = new Controllers\Posts($model);
 $view = new View\Posts($controller, $model);
 
-$loggedIn = false;
-
-if($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['']) {
-
-}
-
+$loggedIn = $_SESSION['loggedIn'] ?? false;
+var_dump($loggedIn);
 if ($loggedIn) {
     $controller->allPosts();
     $view->showAllPosts();
 } else {
-    $view->showLoginForm();
+    // $view->showForm('loginForm.php');
+    include_once 'templates/loginForm.php';
+    include_once 'templates/registerForm.php';
 }

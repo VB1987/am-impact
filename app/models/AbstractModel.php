@@ -3,8 +3,8 @@ namespace Models;
 
 abstract class AbstractModel {
     protected $db; 				// De actieve databaseconnectie
-    protected $data;				// De opgehaalde data
-    protected $template; 		    // De template die ingeladen moet worden
+    protected $data;			// De opgehaalde data
+    protected $template; 		// De template die ingeladen moet worden
     protected $stylesheet; 		// De stylesheet die ingeladen moet worden
 
     use \DatabaseTrait;
