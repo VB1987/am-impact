@@ -12,9 +12,16 @@ class Posts extends AbstractView {
     {
         $style = $this->style;
         $data = '';
-        $data .= $this->model->getPostsByCommunity()[0];
-
+        foreach($this->model->getData() as $post => $value) {
+            $data .= '<article>';
+            $data .= '<h2>' . $value['post_title'] . '</h2>';
+            $data .= '<p>' . $value['post_content'] . '</p>';
+            $data .= '</article>';
+        }
+        
         require_once($this->model->getTemplate());
+
+        // include_once 'templates/postForm.php';
     }
 
     /**
@@ -33,17 +40,17 @@ class Posts extends AbstractView {
             $data .= '<p>' . $value['post_content'] . '</p>';
             $data .= '</article>';
         }
-
-        $form = include_once 'templates/postForm.php';
-
+        
         require_once($this->model->getTemplate());
+
+        // include_once 'templates/postForm.php';
     }
 
-    public function showForm($template)
-    {
-        $style = $this->style;
-        $form = include_once 'templates/' . $template;
+    // public function showForm($template)
+    // {
+    //     $style = $this->style;
+    //     $form = 'templates/' . $template;
 
-        // require_once($this->model->getTemplate());
-    }
+    //     require_once($this->model->getTemplate());
+    // }
 }

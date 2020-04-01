@@ -10,9 +10,9 @@ if(isset($_POST['login'])) {
     
     $controller->invoke($args);
 }
-if (isset($_POST['registerForm'])) {
-    $view->showForm('registerForm.php');
-}
+// if (isset($_POST['registerForm'])) {
+//     $view->showForm('registerForm.php');
+// }
 ?><form id="login_form" action="" method="POST" enctype="multipart/form-data">
     <fieldset><legend>Inloggen</legend>
         <label>Email: <input type="text" name="email" required></label>

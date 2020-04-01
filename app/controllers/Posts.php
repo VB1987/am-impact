@@ -39,16 +39,23 @@ class Posts extends AbstractController {
             $this->model->registerUser($args);
         } elseif($action == 'create community') {
             $this->model->createCommunity($args);
+        } elseif($action == 'submit post') {
+            $this->model->submitPost($args);
         }
     }
 
-    public function registerForm()
-    {
-        $this->view->showForm('registerForm.php');
-    }
+    // public function registerForm()
+    // {
+    //     $this->view->showForm('registerForm.php');
+    // }
 
-    public function loginForm()
+    // public function loginForm()
+    // {
+    //     $this->view->showForm('loginForm.php');
+    // }
+
+    public function logout()
     {
-        $this->view->showForm('loginForm.php');
+        $this->model->logout();
     }
 }

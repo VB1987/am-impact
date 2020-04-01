@@ -2,10 +2,11 @@
 namespace Models;
 
 abstract class AbstractModel {
-    protected $db; 				// De actieve databaseconnectie
-    protected $data;			// De opgehaalde data
-    protected $template; 		// De template die ingeladen moet worden
-    protected $stylesheet; 		// De stylesheet die ingeladen moet worden
+    protected $db; 				    // De actieve databaseconnectie
+    protected $data;			    // De opgehaalde data
+    protected $template; 		    // De template die ingeladen moet worden
+    protected $stylesheet; 		    // De stylesheet die ingeladen moet worden
+    // protected $loggedInUserData;    // De data van de ingelogde gebruiker vanuit de database
 
     use \DatabaseTrait;
 
@@ -35,4 +36,14 @@ abstract class AbstractModel {
     {
         $this->data = $data;
     }
+
+    // public function getLoggedInUserData()
+    // {
+    //     return $this->loggedInUserData;
+    // }
+
+    // public function setLoggedInUserData($data)
+    // {
+    //     $this->loggedInUserData = $data;
+    // }
 }

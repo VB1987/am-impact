@@ -10,7 +10,14 @@
     <link type="text/css" rel="stylesheet" href="<?=$style?>">
 </head>
 <body>
-    <?=$data?>
-    <?=$form?>
+    <div class="container">
+        <div class="header"></div>
+        <div class="data">
+            <?=$data?>
+        </div>
+        <!-- <div class="form">
+            <?php //$form?>
+        </div> -->
+    </div>
 </body>
 </html>
