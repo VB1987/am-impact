@@ -3,10 +3,102 @@ namespace View;
 
 class Admin extends AbstractView {
 
-    public function showUsers()
+    public function showAllUsers()
     {
         $style = $this->model->getStylesheet();
-        $data = 'All users data';
+        $menu = $this->showMenu();
+        $forms[] = 'templates/logoutForm.php';
+
+        $data = '<table>';
+        $data .= '<tr><th>ID</th><th>Firstname</th><th>Lastname</th><th>Email</th><th>Is admin</th><th>Blocked</th><th>Member of communities</th><th>Liked posts</th></tr>';
+        // var_dump($this->model->getAllUsers());
+        foreach($this->model->getAllUsers() as $user => $value) {
+            $data .= '<tr>';
+            $data .= '<td>' . $value['id'] . '</td>';
+            $data .= '<td>' . $value['firstname'] . '</td>';
+            $data .= '<td>' . $value['lastname'] . '</td>';
+            $data .= '<td>' . $value['email'] . '</td>';
+            $data .= '<td>' . $value['admin'] . '</td>';
+            $data .= '<td>' . $value['blocked'] . '</td>';
+            $data .= '<td>' . $value['community_id'] . '</td>';
+            $data .= '<td>' . $value['liked_post_ids'] . '</td>';
+            $data .= '<td>' . $this->showButtons('block_user', 'id', $value['id'], 'Block') . '</td>';
+            $data .= '</tr>';
+        }
+        $data .= '</table>';
+
+        require_once($this->model->getTemplate());
+    }
+
+    public function showAllBlockedUsers()
+    {
+        $style = $this->model->getStylesheet();
+        $menu = $this->showMenu();
+        $forms[] = 'templates/logoutForm.php';
+
+        $data = '<table>';
+        $data .= '<tr><th>ID</th><th>Firstname</th><th>Lastname</th><th>Email</th><th>Member of communities</th><th>Liked posts</th></tr>';
+        // var_dump($this->model->getAllUsers());
+        foreach($this->model->getAllBlockedUsers() as $user => $value) {
+            $data .= '<tr>';
+            $data .= '<td>' . $value['id'] . '</td>';
+            $data .= '<td>' . $value['firstname'] . '</td>';
+            $data .= '<td>' . $value['lastname'] . '</td>';
+            $data .= '<td>' . $value['email'] . '</td>';
+            $data .= '<td>' . $value['community_id'] . '</td>';
+            $data .= '<td>' . $value['liked_post_ids'] . '</td>';
+            $data .= '<td>' . $this->showButtons('unblock_user', 'id', $value['id'], 'Unblock') . '</td>';
+            $data .= '</tr>';
+        }
+        $data .= '</table>';
+
+        require_once($this->model->getTemplate());
+    }
+
+    public function showAllPosts()
+    {
+        $style = $this->model->getStylesheet();
+        $menu = $this->showMenu();
+        $forms[] = 'templates/logoutForm.php';
+
+        $data = '<table>';
+        $data .= '<tr><th>ID</th><th>User ID</th><th>Post title</th><th>Post Concent</th><th>Posted date</th><th>Likes</th><th>Community ID</th></tr>';
+        // var_dump($this->model->getAllPosts());
+        foreach($this->model->getAllPosts() as $post => $value) {
+            $data .= '<tr>';
+            $data .= '<td>' . $value['id'] . '</td>';
+            $data .= '<td>' . $value['user_id'] . '</td>';
+            $data .= '<td>' . $value['post_title'] . '</td>';
+            $data .= '<td>' . $value['post_content'] . '</td>';
+            $data .= '<td>' . $value['post_date'] . '</td>';
+            $data .= '<td>' . $value['likes'] . '</td>';
+            $data .= '<td>' . $value['community_id'] . '</td>';
+            $data .= '<td>' . $this->showButtons('delete_post', 'id', $value['id'], 'Delete') . '</td>';
+            $data .= '</tr>';
+        }
+        $data .= '</table>';
+
+        require_once($this->model->getTemplate());
+    }
+
+    public function showAllCommunities()
+    {
+        $style = $this->model->getStylesheet();
+        $menu = $this->showMenu();
+        $forms[] = 'templates/logoutForm.php';
+
+        $data = '<table>';
+        $data .= '<tr><th>ID</th><th>Name</th><th>image url</th></tr>';
+        // var_dump($this->model->getAllCommunities());
+        foreach($this->model->getAllCommunities() as $post => $value) {
+            $data .= '<tr>';
+            $data .= '<td>' . $value['id'] . '</td>';
+            $data .= '<td>' . $value['name'] . '</td>';
+            $data .= '<td>' . $value['img_url'] . '</td>';
+            $data .= '<td>' . $this->showButtons('delete_community', 'id', $value['id'], 'Delete') . '</td>';
+            $data .= '</tr>';
+        }
+        $data .= '</table>';
 
         require_once($this->model->getTemplate());
     }

@@ -1,6 +1,9 @@
 <?php
+    $header = $header ?? false;
+    $menu = $menu ?? false;
+    $footer = $footer ?? false;
     $data = $data ?? false;
-    $form = $form ?? false;
+    $forms = $forms ?? [];
 ?><!DOCTYPE html>
 <html lang="en_EN">
 <head>
@@ -11,13 +14,17 @@
 </head>
 <body>
     <div class="container">
-        <div class="header"></div>
+        <div class="header"><?=$header?></div>
+        <div class="nav"><?=$menu?></div>
         <div class="data">
             <?=$data?>
         </div>
-        <!-- <div class="form">
-            <?php //$form?>
-        </div> -->
+        <div class="form">
+            <?php foreach($forms as $form) {
+                include $form;
+            }?>
+        </div>
+        <div class="footer"><?=$footer?></div>
     </div>
 </body>
 </html>

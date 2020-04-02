@@ -11,6 +11,10 @@ class Posts extends AbstractView {
     public function showCommunityPosts()
     {
         $style = $this->style;
+        $menu = $this->showMenu();
+        $forms[] = 'templates/postForm.php';
+        $forms[] = 'templates/logoutForm.php';
+
         $data = '';
         foreach($this->model->getData() as $post => $value) {
             $data .= '<article>';
@@ -20,8 +24,6 @@ class Posts extends AbstractView {
         }
         
         require_once($this->model->getTemplate());
-
-        // include_once 'templates/postForm.php';
     }
 
     /**
@@ -32,25 +34,41 @@ class Posts extends AbstractView {
     public function showAllPosts()
     {
         $style = $this->style;
+        $menu = $this->showMenu();
+        $forms[] = 'templates/postForm.php';
+        $forms[] = 'templates/logoutForm.php';
+
         $data = '';
         // var_dump($this->model->getData());
         foreach($this->model->getData() as $post => $value) {
             $data .= '<article>';
-            $data .= '<h2>' . $value['post_title'] . '</h2>';
-            $data .= '<p>' . $value['post_content'] . '</p>';
+            $data .= '<h2>' . $value['title'] . '</h2>';
+            $data .= '<p>' . $value['content'] . '</p>';
             $data .= '</article>';
         }
         
         require_once($this->model->getTemplate());
-
-        // include_once 'templates/postForm.php';
     }
 
-    // public function showForm($template)
-    // {
-    //     $style = $this->style;
-    //     $form = 'templates/' . $template;
+    public function showAllCommunities()
+    {
+        $style = $this->model->getStylesheet();
+        $menu = $this->showMenu();
+        $forms[] = 'templates/logoutForm.php';
 
-    //     require_once($this->model->getTemplate());
-    // }
+        $data = '<table>';
+        $data .= '<tr><th>ID</th><th>Name</th><th>image url</th></tr>';
+        // var_dump($this->model->getAllCommunities());
+        foreach($this->model->getAllCommunities() as $community => $value) {
+            $data .= '<tr>';
+            $data .= '<td>' . $value['id'] . '</td>';
+            $data .= '<td>' . $value['name'] . '</td>';
+            $data .= '<td>' . $value['img_url'] . '</td>';
+            $data .= '<td>' . $this->showButtons('join_community', 'id', $value['id'], 'Join') . '</td>';
+            $data .= '</tr>';
+        }
+        $data .= '</table>';
+
+        require_once($this->model->getTemplate());
+    }
 }

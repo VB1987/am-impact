@@ -6,54 +6,45 @@ spl_autoload_register(function($classname) {
     if (file_exists($filename)) {require_once $filename;}
 });
 
-$model = new Models\Posts();
-$controller = new Controllers\Posts($model);
-$view = new View\Posts($controller, $model);
+$model = new Models\Admin();
+$controller = new Controllers\Admin($model);
+$view = new View\Admin($controller, $model);
 
 $args = [
     ['text' => 'Posts', 'url' => '', 'target' => '_self', 'name' => 'page', 'value' => 'posts'],
+    ['text' => 'Users', 'url' => '', 'target' => '_self', 'name' => 'page', 'value' => 'users'],
+    ['text' => 'Blocked users', 'url' => '', 'target' => '_self', 'name' => 'page', 'value' => 'blocked_users'],
     ['text' => 'Communities', 'url' => '', 'target' => '_self', 'name' => 'page', 'value' => 'communities'],
 ];
 $controller->menu($args);
 
-// $model->sessionDestroy();
-var_dump($_POST);
-if (isset($_SESSION['admin'])) {
-    header('Location: admin.php');
-}
-if (isset($_SESSION['loggedIn'])) {
+if (isset($_SESSION['loggedIn']) && $_SESSION['admin']) {
     if (isset($_GET['page'])) {
-        if ($_GET['page'] === 'posts') {wAllPosts();
-            $controller->PostsByCommunity();
-            $view->showCommunityPosts();
+        if ($_GET['page'] === 'users') {
+            $view->showAllUsers();
+        }
+        if ($_GET['page'] === 'blocked_users') {
+            $view->showAllBlockedUsers();
+        }
+        if ($_GET['page'] === 'posts') {
+            $view->showAllPosts();
         }
         if ($_GET['page'] === 'communities') {
             $view->showAllCommunities();
         }
     } else {
-        $controller->PostsByCommunity();
-        $view->showCommunityPosts();
+        $view->showAllUsers();
     }
 
+    // var_dump($_POST);
     if (isset($_POST['action']) && isset($_POST['id'])) {
         $controller->update($_POST['action'], $_POST['id']);
     }
+
 } else {
     header('Location: login.php');
 }
 
-if (isset($_POST['submit_post'])) {
-    $args = [
-        'action' => 'submit post',
-        'data' => [
-            // 'user_id' => $_SESSION['userId'],
-            'title' => $_POST['post_title'],
-            'content' => $_POST['post_content'],
-        ],
-    ];
-
-    $controller->invoke($args);
-}
 if (isset($_POST['logout'])) {
     $controller->sessionDestroy();
     header('Location: login.php');

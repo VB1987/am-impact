@@ -6,10 +6,16 @@ spl_autoload_register(function($classname) {
     if (file_exists($filename)) {require_once $filename;}
 });
 
-$model = new Models\Posts();
-$controller = new Controllers\Posts($model);
-$view = new View\Posts($controller, $model);
+$model = new Models\Users();
+$controller = new Controllers\Users($model);
+$view = new View\Users($controller, $model);
 
+if (!isset($_SESSION['loggedIn'])) {
+    $view->showLoginForm();
+}
+// $model->sessionDestroy();
+// $model->checkLoginStatus();
+var_dump($_SESSION);
 if(isset($_POST['login'])) {
     $args = [
         'action' => 'login',
@@ -20,6 +26,12 @@ if(isset($_POST['login'])) {
     ];
     
     $controller->invoke($args);
+
+    header('Location: posts.php');
+    // if($model->checkLoginStatus() == 'admin') {
+    //     header('Location: admin.php');
+    // } elseif($model->checkLoginStatus() === true) {
+    // }
 }
 if (isset($_POST['register'])) {
     $args = [
@@ -33,7 +45,4 @@ if (isset($_POST['register'])) {
     ];
 
     $controller->invoke($args);
-} 
-
-include_once 'templates/loginForm.php';
-include_once 'templates/registerForm.php';
+}

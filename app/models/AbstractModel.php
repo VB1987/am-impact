@@ -6,7 +6,7 @@ abstract class AbstractModel {
     protected $data;			    // De opgehaalde data
     protected $template; 		    // De template die ingeladen moet worden
     protected $stylesheet; 		    // De stylesheet die ingeladen moet worden
-    // protected $loggedInUserData;    // De data van de ingelogde gebruiker vanuit de database
+    protected $menu;                // De menu items
 
     use \DatabaseTrait;
 
@@ -37,13 +37,42 @@ abstract class AbstractModel {
         $this->data = $data;
     }
 
-    // public function getLoggedInUserData()
-    // {
-    //     return $this->loggedInUserData;
-    // }
+    public function getDateAndTime()
+    {
+        $today = date('d-m-Y');
+        $time = date('H:i:s');
+        
+        return $today . '/' . $time;
+    }
 
-    // public function setLoggedInUserData($data)
-    // {
-    //     $this->loggedInUserData = $data;
-    // }
+    public function sessionDestroy()
+    {
+        session_destroy();
+        session_start();
+    }
+
+    public function setMenu($args)
+    {
+        $this->menu = $args;
+    }
+    
+    public function getMenu()
+    {
+        return $this->menu;
+    }
+    
+    public function getAllCommunities()
+    {
+        try {
+            $stmt = $this->db->query("SELECT * FROM communities");
+            $stmt->setFetchMode(\PDO::FETCH_ASSOC);
+            
+            $data = [];
+            while($row = $stmt->fetch()) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        catch(PDOException $e) {echo $e->getMessage();}
+    }
 }
