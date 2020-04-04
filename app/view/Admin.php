@@ -22,7 +22,7 @@ class Admin extends AbstractView {
             $data .= '<td>' . $value['blocked'] . '</td>';
             $data .= '<td>' . $value['community_id'] . '</td>';
             $data .= '<td>' . $value['liked_post_ids'] . '</td>';
-            $data .= '<td>' . $this->showButtons('block_user', 'id', $value['id'], 'Block') . '</td>';
+            $data .= '<td>' . $this->showButton('block_user', 'id', $value['id'], 'Block') . '</td>';
             $data .= '</tr>';
         }
         $data .= '</table>';
@@ -47,7 +47,7 @@ class Admin extends AbstractView {
             $data .= '<td>' . $value['email'] . '</td>';
             $data .= '<td>' . $value['community_id'] . '</td>';
             $data .= '<td>' . $value['liked_post_ids'] . '</td>';
-            $data .= '<td>' . $this->showButtons('unblock_user', 'id', $value['id'], 'Unblock') . '</td>';
+            $data .= '<td>' . $this->showButton('unblock_user', 'id', $value['id'], 'Unblock') . '</td>';
             $data .= '</tr>';
         }
         $data .= '</table>';
@@ -73,7 +73,7 @@ class Admin extends AbstractView {
             $data .= '<td>' . $value['post_date'] . '</td>';
             $data .= '<td>' . $value['likes'] . '</td>';
             $data .= '<td>' . $value['community_id'] . '</td>';
-            $data .= '<td>' . $this->showButtons('delete_post', 'id', $value['id'], 'Delete') . '</td>';
+            $data .= '<td>' . $this->showButton('delete_post', 'id', $value['id'], 'Delete') . '</td>';
             $data .= '</tr>';
         }
         $data .= '</table>';
@@ -95,7 +95,7 @@ class Admin extends AbstractView {
             $data .= '<td>' . $value['id'] . '</td>';
             $data .= '<td>' . $value['name'] . '</td>';
             $data .= '<td>' . $value['img_url'] . '</td>';
-            $data .= '<td>' . $this->showButtons('delete_community', 'id', $value['id'], 'Delete') . '</td>';
+            $data .= '<td>' . $this->showButton('delete_community', 'id', $value['id'], 'Delete') . '</td>';
             $data .= '</tr>';
         }
         $data .= '</table>';

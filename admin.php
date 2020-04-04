@@ -36,7 +36,6 @@ if (isset($_SESSION['loggedIn']) && $_SESSION['admin']) {
         $view->showAllUsers();
     }
 
-    // var_dump($_POST);
     if (isset($_POST['action']) && isset($_POST['id'])) {
         $controller->update($_POST['action'], $_POST['id']);
     }

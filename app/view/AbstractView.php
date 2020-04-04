@@ -33,9 +33,9 @@ abstract class AbstractView
         return $data;
     }
 
-    public function showButtons($action, $name, $value, $text)
+    public function showButton($action, $name, $value, $text, $method = 'POST')
     {
-        $buttons = '<form id="menu_form" url="" method="POST" enctype="multipart/form-data">';
+        $buttons = '<form id="menu_form" url="" method="' . $method . '" enctype="multipart/form-data">';
         $buttons .= '<button name="' . $name . '" value="' . $value . '">' . $text . '</button>';
         $buttons .= '<input type="hidden" name="action" value="' . $action . '">';
         $buttons .= '</form>';

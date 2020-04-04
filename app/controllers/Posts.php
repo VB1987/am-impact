@@ -21,6 +21,9 @@ class Posts extends AbstractController {
         if($action === 'leave_community') {
             $this->model->leaveCommunity($id);
         }
+        if($action === 'like_post') {
+            $this->model->likePost($id);
+        }
     }
 
 }

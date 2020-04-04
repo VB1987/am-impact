@@ -37,12 +37,14 @@ abstract class AbstractModel {
         $this->data = $data;
     }
 
-    public function getDateAndTime()
+    public function getDate()
     {
-        $today = date('d-m-Y');
-        $time = date('H:i:s');
-        
-        return $today . '/' . $time;
+        return date('d-m-Y');
+    }
+
+    public function getTime()
+    {
+        return date('H:i:s');
     }
 
     public function sessionDestroy()
@@ -60,7 +62,7 @@ abstract class AbstractModel {
     {
         return $this->menu;
     }
-    
+
     public function getAllCommunities()
     {
         try {
@@ -74,5 +76,13 @@ abstract class AbstractModel {
             return $data;
         }
         catch(PDOException $e) {echo $e->getMessage();}
+    }
+
+    public function getLoggedInUserId()
+    {
+        $userData = \json_decode($_SESSION['userData']);
+        $userId = $userData->id;
+
+        return $userId;
     }
 }

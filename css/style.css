@@ -1,3 +1,22 @@
+body {
+    width: 100vw;
+}
+
+.container {
+    max-width: 1024px;
+    margin: auto;
+}
+
 table, th, tr, td {
     border: solid 1px black;
+}
+
+article {
+    border: solid 1px black;
+    margin-bottom: 20px;
+    padding-left: 10px;
+}
+
+button {
+    min-width: 60px;
 }
