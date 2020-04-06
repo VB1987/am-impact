@@ -10,36 +10,43 @@ class Posts extends AbstractModel {
         if($this->checkUserIsBlocked()) {
             return;
         }
-
+        
         if($_SESSION['loggedIn']) {
             $communityID = $this->getMemberOfCommunitiesId();
             
-            $data = [];
-            foreach ($communityID as $singleId) {
-                try {
-                    $stmt = $this->db->prepare("
-                        SELECT posts.id, posts.user_id, posts.post_title, posts.post_content, posts.post_date, posts.likes, posts.community_id FROM posts 
-                        LEFT JOIN communities ON communities.id = posts.community_id
-                        WHERE posts.community_id = ?
-                    ");
-                    $stmt->bindParam(1, $singleId);
-                    $stmt->execute();
-                    $stmt->setFetchMode(\PDO::FETCH_ASSOC);
-                    while($row = $stmt->fetch()) {
-                        $data[] = $row;
+            if(isset($communityID)) {
+                $data = [];
+                foreach ($communityID as $singleId) {
+                    try {
+                        $stmt = $this->db->prepare("
+                            SELECT posts.id, posts.user_id, posts.post_title, posts.post_content, posts.post_date, posts.likes, posts.community_id FROM posts 
+                            LEFT JOIN communities ON communities.id = posts.community_id
+                            WHERE posts.community_id = ?
+                        ");
+                        $stmt->bindParam(1, $singleId);
+                        $stmt->execute();
+                        $stmt->setFetchMode(\PDO::FETCH_ASSOC);
+                        while($row = $stmt->fetch()) {
+                            $data[] = $row;
+                        }
                     }
+                    catch(PDOException $e) {echo $e->getMessage();}
                 }
-                catch(PDOException $e) {echo $e->getMessage();}
+                usort($data, function($a, $b) {
+                    return strtotime($a['post_date']) - strtotime($b['post_date']);
+                });
+
+                $this->data = $data;
             }
-            usort($data, function($a, $b) {
-                return strtotime($a['post_date']) - strtotime($b['post_date']);
-            });
-            $this->data = $data;
         }
     }
 
     public function submitPost($args)
     {
+        if($this->checkUserIsBlocked()) {
+            return;
+        }
+
         $userId = $this->getLoggedInUserId();
         $postDate = $this->getDate();
         $postTime = $this->getTime();
@@ -56,6 +63,9 @@ class Posts extends AbstractModel {
             $stmt->bindParam(5, $postTime);
             $stmt->bindParam(6, $args['data']['community id']);
             $stmt->execute();
+
+            $this->sendMailtoMembers($args['data']['community_id']);
+
         } catch(PDOException $e) {
             echo $e->getMessage("ERROR: Could not prepare MySQLi statement.");
         }
@@ -63,6 +73,10 @@ class Posts extends AbstractModel {
 
     public function joinCommunity($id)
     {
+        if($this->checkUserIsBlocked()) {
+            return;
+        }
+
         $userId = $this->getLoggedInUserId();
 
         $communities = $this->getMemberOfCommunitiesId();
@@ -118,10 +132,11 @@ class Posts extends AbstractModel {
         $userId = $this->getLoggedInUserId();
         $likes = $this->getLikes($id);
         $likedPosts = $this->getLikedPostsByUser();
-
+        $postedBy = $this->getPostedBy($id);
+        
         $likedPosts = explode(',', $likedPosts);
 
-        if (!in_array($id, $likedPosts)) {
+        if (!in_array($id, $likedPosts) && !$postedBy) {
             $this->addLikedPostsToUser($id);
             $likes++;
 
@@ -228,31 +243,33 @@ class Posts extends AbstractModel {
         $userId = $this->getLoggedInUserId();
         $communityIds = $this->getMemberOfCommunitiesId();
         
-        $communities = [];
-        foreach($communityIds as $singleId) {
-            try {
-                $stmt = $this->db->prepare("
-                SELECT * FROM users
-                    LEFT JOIN communities ON communities.id = $singleId
-                    WHERE users.id = ?
-                ");
-                $stmt->bindParam(1, $userId);
-                $stmt->execute();
-                
-                while($row = $stmt->fetch()) {
-                    $communities[] = $row;
-                }
-                // $communities = explode(',', $communities);
-                
-                // usort($communities, function($a, $b) {
-                //     return $a - $b;
-                // });
+        if(isset($communityIds)) {
+            $communities = [];
+            foreach($communityIds as $singleId) {
+                try {
+                    $stmt = $this->db->prepare("
+                    SELECT * FROM users
+                        LEFT JOIN communities ON communities.id = $singleId
+                        WHERE users.id = ?
+                    ");
+                    $stmt->bindParam(1, $userId);
+                    $stmt->execute();
+                    
+                    while($row = $stmt->fetch()) {
+                        $communities[] = $row;
+                    }
+                    // $communities = explode(',', $communities);
+                    
+                    // usort($communities, function($a, $b) {
+                    //     return $a - $b;
+                    // });
 
+                }
+                catch(PDOException $e) {echo $e->getMessage();}
             }
-            catch(PDOException $e) {echo $e->getMessage();}
-        }
         
-        return $communities;
+            return $communities;
+        }
     }
 
     public function checkUserIsBlocked()
@@ -304,12 +321,103 @@ class Posts extends AbstractModel {
                 $communitiesNew[] = $value;
             }
             
-            usort($communitiesNew, function($a, $b) {
-                return $a - $b;
-            });
-            
-            return $communitiesNew;
+            if(isset($communitiesNew)) {
+                usort($communitiesNew, function($a, $b) {
+                    return $a - $b;
+                });
+                
+                return $communitiesNew;
+            }
         }
         catch(PDOException $e) {echo $e->getMessage();}
+    }
+
+    public function getPostedBy($id)
+    {   
+        $userId = $this->getLoggedInUserId();
+
+        try {
+            $stmt = $this->db->prepare("
+                SELECT posts.user_id FROM posts
+                WHERE posts.id = ?
+            ");
+            $stmt->bindParam(1, $id);
+            $stmt->execute();
+            
+            while($row = $stmt->fetch()) {
+                $postByUser = $row['user_id'];
+            }
+            
+            if($postByUser === $userId) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        catch(PDOException $e) {echo $e->getMessage();}   
+    }
+
+    public function sendMailtoMembers($communityId)
+    {
+        require_once 'resources/swift-mailer/lib/swift_required.php';
+
+        $emails = $this->getCommunityMembersEmail($communityId);
+
+        $msg = 'Er is een niewe post geplaats op een community waar u lid van bent.';
+
+        // foreach($emails as $email) {
+            // var_dump($email);
+            // mail($email, 'New Post', $msg, 'From:vincent.braamburg@live.nl');
+        // }
+            // Nieuwe e-mail componeren
+            $message = \Swift_Message::newInstance();
+            // "Subject" instellen
+            $message->setSubject('New post');
+            // "From" instellen
+            $message->setFrom(array('example@gmail.com'));
+            // "To" instellen
+            // $message->setTo(array($emails));
+            $message->setTo($emails);
+            // "Body" instellen
+            $message->setBody($msg);
+            // Een alternatieve "Body" instellen voor als HTML toegelaten wordt
+            // $message->addPart('<q>Ik citeer hier een bericht.</q>','text/html');
+            
+            // De instellingen voor het mailen configureren
+            $transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com',465,'ssl');
+            $transport->setUsername('example@gmail.com');
+            $transport->setPassword('password');
+            
+            // De mailer opstellen op basis van de gezette instellingen
+            $mailer	= \Swift_Mailer::newInstance($transport);
+            
+            // Het bericht daadwerkelijk versturen
+            $result = $mailer->send($message);
+    }
+
+    public function getCommunityMembersEmail($communityId)
+    {
+        try {
+            $stmt = $this->db->prepare("
+                SELECT id, email, community_id FROM users
+            ");
+            $stmt->bindParam(1, $userId);
+            $stmt->execute();
+
+            while($row = $stmt->fetch()) {
+                $users[] = $row;
+            }
+        }
+        catch(PDOException $e) {echo $e->getMessage();}
+
+        foreach($users as $user) {
+            $communityIds = explode(',', $user['community_id']);
+        
+            if(in_array($communityId, $communityIds)) {
+                $emails[] = $user['email'];
+            }
+        }
+
+        return $emails;
     }
 }

@@ -3,7 +3,6 @@ namespace Models;
 
 class Users extends AbstractModel {
     protected $salt = 'j4H9?s0d';
-    // protected $userData;    // De data van de ingelogde gebruiker vanuit de database
 
     use \DatabaseTrait;
 
@@ -27,7 +26,6 @@ class Users extends AbstractModel {
                 $stmt->setFetchMode(\PDO::FETCH_ASSOC);
                 $data = $stmt->fetch();
                 
-                // var_dump($data);
                 if($data) {
                     $_SESSION['loggedIn'] = true;
                     if($data['admin'] == '1') {
@@ -35,9 +33,6 @@ class Users extends AbstractModel {
                     }
                     $_SESSION['userData'] = \json_encode($data);
                     
-                    // $this->userData = \json_encode($data);
-                    // var_dump('json: ' . $this->userData);
-
                     return true;
                 } else {
                     $this->sessionDestroy();
@@ -53,12 +48,11 @@ class Users extends AbstractModel {
     {
         if(isset($_SESSION['loggedIn'])) {
             $userData = json_decode($_SESSION['userData']);
-            // var_dump($userData->id);
+            
             if($_SESSION['loggedIn'] === true && $userData->admin == 1) {
-                // header('Location: admin.php');
                 return 'admin';
             } elseif($_SESSION['loggedIn'] === true && $userData->admin == 0) {
-            return true;
+                return true;
             } else {
                 return false;
             }
@@ -98,7 +92,7 @@ class Users extends AbstractModel {
             $stmt->execute();
             $stmt->setFetchMode(\PDO::FETCH_ASSOC);
             $data = $stmt->fetch();
-            // var_dump($data);
+            
             if(!empty($data)) {
                 return true;
             } else {

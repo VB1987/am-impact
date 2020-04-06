@@ -50,7 +50,6 @@ abstract class AbstractModel {
     public function sessionDestroy()
     {
         session_destroy();
-        session_start();
     }
 
     public function setMenu($args)
@@ -84,5 +83,29 @@ abstract class AbstractModel {
         $userId = $userData->id;
 
         return $userId;
+    }
+
+    public function createCommunity($args)
+    {
+        $communities = $this->getAllCommunities();
+        $image = json_encode($args['data']['image']);
+
+        foreach($communities as $community) {
+            if($community['name'] === $args['data']['name']) {
+                return;
+            }
+        }
+
+        try {
+            $stmt = $this->db->prepare("
+                INSERT INTO communities (name, image) 
+                VALUES (?, ?)
+            ");
+            $stmt->bindParam(1, $args['data']['name']);
+            $stmt->bindParam(2, $image);
+            $stmt->execute();
+        } catch(PDOException $e) {
+            echo $e->getMessage("ERROR: Could not prepare MySQLi statement.");
+        }
     }
 }

@@ -11,7 +11,7 @@ class Admin extends AbstractView {
 
         $data = '<table>';
         $data .= '<tr><th>ID</th><th>Firstname</th><th>Lastname</th><th>Email</th><th>Is admin</th><th>Blocked</th><th>Member of communities</th><th>Liked posts</th></tr>';
-        // var_dump($this->model->getAllUsers());
+        
         foreach($this->model->getAllUsers() as $user => $value) {
             $data .= '<tr>';
             $data .= '<td>' . $value['id'] . '</td>';
@@ -22,6 +22,7 @@ class Admin extends AbstractView {
             $data .= '<td>' . $value['blocked'] . '</td>';
             $data .= '<td>' . $value['community_id'] . '</td>';
             $data .= '<td>' . $value['liked_post_ids'] . '</td>';
+            $data .= '<td>' . $this->showButton('admin_user', 'id', $value['id'], 'Admin') . '</td>';
             $data .= '<td>' . $this->showButton('block_user', 'id', $value['id'], 'Block') . '</td>';
             $data .= '</tr>';
         }
@@ -38,7 +39,7 @@ class Admin extends AbstractView {
 
         $data = '<table>';
         $data .= '<tr><th>ID</th><th>Firstname</th><th>Lastname</th><th>Email</th><th>Member of communities</th><th>Liked posts</th></tr>';
-        // var_dump($this->model->getAllUsers());
+        
         foreach($this->model->getAllBlockedUsers() as $user => $value) {
             $data .= '<tr>';
             $data .= '<td>' . $value['id'] . '</td>';
@@ -63,7 +64,7 @@ class Admin extends AbstractView {
 
         $data = '<table>';
         $data .= '<tr><th>ID</th><th>User ID</th><th>Post title</th><th>Post Concent</th><th>Posted date</th><th>Likes</th><th>Community ID</th></tr>';
-        // var_dump($this->model->getAllPosts());
+        
         foreach($this->model->getAllPosts() as $post => $value) {
             $data .= '<tr>';
             $data .= '<td>' . $value['id'] . '</td>';
@@ -89,7 +90,7 @@ class Admin extends AbstractView {
 
         $data = '<table>';
         $data .= '<tr><th>ID</th><th>Name</th><th>image url</th></tr>';
-        // var_dump($this->model->getAllCommunities());
+        
         foreach($this->model->getAllCommunities() as $post => $value) {
             $data .= '<tr>';
             $data .= '<td>' . $value['id'] . '</td>';

@@ -6,7 +6,6 @@ abstract class AbstractView
     protected $model;
     protected $controller;
     protected $style;
-    protected $menu;
     
     final public function __construct($controller, $model) 
     {
@@ -14,14 +13,12 @@ abstract class AbstractView
         $this->controller = $controller;
 
         $this->style = $this->model->getStylesheet();
-
-        // $this->menu = $this->showMenu();
     }
 
     public function showMenu()
     {
         $menuItems = $this->model->getMenu();
-        // var_dump($menuItems);
+        
         $data = '<form id="menu_form" action="" method="GET">';
         $data .= '<fieldset><legend>Options</legend>';
         foreach($menuItems as $item) {

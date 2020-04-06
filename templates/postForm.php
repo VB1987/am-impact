@@ -12,7 +12,7 @@
 //     $controller->invoke($args);
 // }
 ?><form id="post_form" action="" method="POST" enctype="multipart/form-data">
-    <fieldset><legend>Plaats een post</legend>
+    <fieldset><legend>Add new post</legend>
         <label for="post_title">Title: </label><input type="text" name="post_title" required>
         <br>
         <br>

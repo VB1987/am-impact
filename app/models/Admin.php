@@ -18,12 +18,9 @@ class Admin extends AbstractModel {
             $stmt->setFetchMode(\PDO::FETCH_ASSOC);
             $data = [];
             while($row = $stmt->fetch()) {
-                // var_dump($row);
-                // $row['post_title'] = $row['post_title'];
                 $data[] = $row;
             }
             return $data;
-            // var_dump($data);
         }
         catch(PDOException $e) {echo $e->getMessage();}
     }
@@ -107,6 +104,20 @@ class Admin extends AbstractModel {
             $stmt = $this->db->prepare("
                 UPDATE users
                 SET blocked = 1
+                WHERE users.id = ?
+            ");
+            $stmt->bindParam(1, $id);
+            $stmt->execute();
+        }
+        catch(PDOException $e) {echo $e->getMessage();}
+    }
+
+    public function adminUser($id)
+    {
+        try {
+            $stmt = $this->db->prepare("
+                UPDATE users
+                SET admin = 1
                 WHERE users.id = ?
             ");
             $stmt->bindParam(1, $id);

@@ -42,16 +42,23 @@ class Posts extends AbstractView {
     {
         $style = $this->model->getStylesheet();
         $menu = $this->showMenu();
+        $forms[] = 'templates/communityForm.php';
         $forms[] = 'templates/logoutForm.php';
 
         $data = '<table>';
-        $data .= '<tr><th>ID</th><th>Name</th><th>image url</th></tr>';
+        $data .= '<tr><th>ID</th><th>Name</th><th>image</th></tr>';
         
         foreach($this->model->getAllCommunities() as $community => $value) {
+            $image = json_decode($value['image']) ?? false;
+            
             $data .= '<tr>';
             $data .= '<td>' . $value['id'] . '</td>';
             $data .= '<td>' . $value['name'] . '</td>';
-            $data .= '<td>' . $value['img_url'] . '</td>';
+            if($image) {
+                $data .= '<td><img src="resources/images/' . $image->name . '"></td>';
+            } else {
+                $data .= '<td></td>';
+            }
             $data .= '<td>' . $this->showButton('join_community', 'id', $value['id'], 'Join') . $this->showButton('leave_community', 'id', $value['id'], 'Leave') . '</td>';
             $data .= '</tr>';
         }

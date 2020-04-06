@@ -20,3 +20,8 @@ article {
 button {
     min-width: 60px;
 }
+
+img {
+    height: 100px;
+    width: 100px;
+}

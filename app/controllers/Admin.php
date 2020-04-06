@@ -33,5 +33,8 @@ class Admin extends AbstractController {
         if($action === 'delete_community') {
             $this->model->deleteCommunity($id);
         }
+        if($action === 'admin_user') {
+            $this->model->adminUser($id);
+        }
     }
 }

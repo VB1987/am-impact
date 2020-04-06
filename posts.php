@@ -6,6 +6,8 @@ spl_autoload_register(function($classname) {
     if (file_exists($filename)) {require_once $filename;}
 });
 
+require_once '.env';
+
 $model = new Models\Posts();
 $controller = new Controllers\Posts($model);
 $view = new View\Posts($controller, $model);
@@ -20,6 +22,11 @@ $controller->menu($args);
 // $model->sessionDestroy();
 // var_dump($_SESSION);
 // var_dump($_GET);
+// var_dump($_FILES);
+// var_dump($_POST);
+
+var_dump($model->sendMailtoMembers(1));
+
 if (isset($_SESSION['admin'])) {
     header('Location: admin.php');
 }
@@ -60,6 +67,20 @@ if (isset($_POST['submit_post'])) {
             ],
         ];
 
+        $controller->invoke($args);
+    }
+}
+if (isset($_POST['create_community'])) {
+    if(!empty($_POST['community_name'])) {
+        $args = [
+            'action' => 'create community',
+            'data' => [
+                // 'user_id' => $_SESSION['userId'],
+                'name' => $_POST['community_name'],
+                'image' => $_FILES['community_image'],
+            ],
+        ];
+        
         $controller->invoke($args);
     }
 }
