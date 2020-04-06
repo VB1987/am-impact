@@ -64,7 +64,7 @@ class Posts extends AbstractModel {
             $stmt->bindParam(6, $args['data']['community id']);
             $stmt->execute();
 
-            $this->sendMailtoMembers($args['data']['community_id']);
+            $this->sendMailtoMembers($args['data']['community id']);
 
         } catch(PDOException $e) {
             echo $e->getMessage("ERROR: Could not prepare MySQLi statement.");
@@ -363,21 +363,29 @@ class Posts extends AbstractModel {
     public function sendMailtoMembers($communityId)
     {
         require_once 'resources/swift-mailer/lib/swift_required.php';
+        require_once 'env.php';
 
         $emails = $this->getCommunityMembersEmail($communityId);
 
         $msg = 'Er is een niewe post geplaats op een community waar u lid van bent.';
+        $subject = 'New post';
+        $header = "From:vincent.braamburg@live.nl \r\n";
+        // $header .= "Cc:afgh@somedomain.com \r\n";
+        $header .= "MIME-Version: 1.0\r\n";
+        $header .= "Content-type: text/html\r\n";
 
         // foreach($emails as $email) {
             // var_dump($email);
-            // mail($email, 'New Post', $msg, 'From:vincent.braamburg@live.nl');
+            // mail($email, 'New Post', $msg, $header);
         // }
+        
+        // try {
             // Nieuwe e-mail componeren
             $message = \Swift_Message::newInstance();
             // "Subject" instellen
-            $message->setSubject('New post');
+            $message->setSubject($subject);
             // "From" instellen
-            $message->setFrom(array('example@gmail.com'));
+            $message->setFrom(array($_ENV['MAIL_USERNAME']));
             // "To" instellen
             // $message->setTo(array($emails));
             $message->setTo($emails);
@@ -387,15 +395,19 @@ class Posts extends AbstractModel {
             // $message->addPart('<q>Ik citeer hier een bericht.</q>','text/html');
             
             // De instellingen voor het mailen configureren
-            $transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com',465,'ssl');
-            $transport->setUsername('example@gmail.com');
-            $transport->setPassword('password');
+            $transport = \Swift_SmtpTransport::newInstance('smtp.gmail.com',587,'tls');
+            // $transport = \Swift_SmtpTransport::newInstance($_ENV['MAIL_HOST'],$_ENV['MAIL_PORT'],$_ENV['MAIL_ENCRYPTION']);
+            $transport->setUsername($_ENV['MAIL_USERNAME']);
+            $transport->setPassword($_ENV['MAIL_PASSWORD']);
             
             // De mailer opstellen op basis van de gezette instellingen
             $mailer	= \Swift_Mailer::newInstance($transport);
             
             // Het bericht daadwerkelijk versturen
             $result = $mailer->send($message);
+        // }catch(\Swift_TransportException $e){
+        //     $response = $e->getMessage() ;
+        // }
     }
 
     public function getCommunityMembersEmail($communityId)

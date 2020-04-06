@@ -7,7 +7,7 @@
         <br>
         <br>
         <label for="select_community">Select community to post to: </label>
-        <select name="select_community" id="">
+        <select name="select_community" required>
             <option value="" disabled selected> - Select community</option>
             <?php foreach($communities as $community) : ?>
                 <option value="<?=$community['id']?>"><?=$community['name']?></option>
