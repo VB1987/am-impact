@@ -92,10 +92,16 @@ class Admin extends AbstractView {
         $data .= '<tr><th>ID</th><th>Name</th><th>image url</th></tr>';
         
         foreach($this->model->getAllCommunities() as $post => $value) {
+            $image = json_decode($value['image']) ?? '';
+
             $data .= '<tr>';
             $data .= '<td>' . $value['id'] . '</td>';
             $data .= '<td>' . $value['name'] . '</td>';
-            $data .= '<td>' . $value['img_url'] . '</td>';
+            if($image) {
+                $data .= '<td><img src="resources/images/' . $image->name . '"></td>';
+            } else {
+                $data .= '<td></td>';
+            }
             $data .= '<td>' . $this->showButton('delete_community', 'id', $value['id'], 'Delete') . '</td>';
             $data .= '</tr>';
         }

@@ -81,22 +81,29 @@ class Posts extends AbstractModel {
 
         $communities = $this->getMemberOfCommunitiesId();
 
-        if(!in_array($id, $communities)) {
+        if(!$communities) {
+            $communities = $id;
+        }
+        elseif(!in_array($id, $communities)) {
             array_push($communities, $id);
             $communities = implode(',', $communities);
-            
-            try {
-                $stmt = $this->db->prepare("
-                    UPDATE users
-                    SET community_id = ?
-                    WHERE users.id = ?
-                ");
-                $stmt->bindParam(1, $communities);
-                $stmt->bindParam(2, $userId);
-                $stmt->execute();
-            }
-            catch(PDOException $e) {echo $e->getMessage();}
         }
+        else {
+            return;
+        }
+            
+        try {
+            $stmt = $this->db->prepare("
+                UPDATE users
+                SET community_id = ?
+                WHERE users.id = ?
+            ");
+            $stmt->bindParam(1, $communities);
+            $stmt->bindParam(2, $userId);
+            $stmt->execute();
+        }
+        catch(PDOException $e) {echo $e->getMessage();}
+        
     }
 
     public function leaveCommunity($id)
@@ -105,26 +112,28 @@ class Posts extends AbstractModel {
 
         $communities = $this->getMemberOfCommunitiesId();
         
-        foreach($communities as $value) {
-            if($value == $id) {
-                continue;
+        if($communities) {
+            foreach($communities as $value) {
+                if($value == $id) {
+                    continue;
+                }
+                $communitiesNew[] = $value;
             }
-            $communitiesNew[] = $value;
-        }
-        
-        $communitiesNew = implode(',', $communitiesNew);
+            
+            $communitiesNew = implode(',', $communitiesNew);
 
-        try {
-            $stmt = $this->db->prepare("
-                UPDATE users
-                SET community_id = ?
-                WHERE users.id = ?
-            ");
-            $stmt->bindParam(1, $communitiesNew);
-            $stmt->bindParam(2, $userId);
-            $stmt->execute();
+            try {
+                $stmt = $this->db->prepare("
+                    UPDATE users
+                    SET community_id = ?
+                    WHERE users.id = ?
+                ");
+                $stmt->bindParam(1, $communitiesNew);
+                $stmt->bindParam(2, $userId);
+                $stmt->execute();
+            }
+            catch(PDOException $e) {echo $e->getMessage();}
         }
-        catch(PDOException $e) {echo $e->getMessage();}
     }
 
     public function likePost($id)
