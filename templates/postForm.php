@@ -1,17 +1,4 @@
-<?php
-// if (isset($_POST['submit_post'])) {
-//     $args = [
-//         'action' => 'submit post',
-//         'data' => [
-//             // 'user_id' => $_SESSION['userId'],
-//             'title' => $_POST['post_title'],
-//             'content' => $_POST['post_content'],
-//         ],
-//     ];
-
-//     $controller->invoke($args);
-// }
-?><form id="post_form" action="" method="POST" enctype="multipart/form-data">
+<form id="post_form" action="" method="POST" enctype="multipart/form-data">
     <fieldset><legend>Add new post</legend>
         <label for="post_title">Title: </label><input type="text" name="post_title" required>
         <br>

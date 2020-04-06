@@ -1,6 +1,4 @@
-<?php
-
-?><form id="community_form" action="" method="POST" enctype="multipart/form-data">
+<form id="community_form" action="" method="POST" enctype="multipart/form-data">
     <fieldset><legend>Create a community</legend>
         <label for="community_name">Title: </label><input type="text" name="community_name" required>
         <br>

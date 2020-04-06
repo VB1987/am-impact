@@ -258,12 +258,6 @@ class Posts extends AbstractModel {
                     while($row = $stmt->fetch()) {
                         $communities[] = $row;
                     }
-                    // $communities = explode(',', $communities);
-                    
-                    // usort($communities, function($a, $b) {
-                    //     return $a - $b;
-                    // });
-
                 }
                 catch(PDOException $e) {echo $e->getMessage();}
             }
